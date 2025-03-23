@@ -198,18 +198,25 @@ function renderBlogSections() {
     const featured = blogPosts.filter(post => post.category === "featured");
     const latest = blogPosts.filter(post => post.category === "latest");
 
-    const renderCards = posts => posts.map(post => `
-        <div class="col-md-4 mb-3">
-            <div class="card">
-                <img class="card-img-top" src="${post.image}" alt="Story Image">
-                <div class="card-body">
-                    <h5 class="card-title">${post.title}</h5>
-                    <p class="card-text">${post.summary}</p>
-                    <a href="#/blog?id=${post.id}" class="btn btn-success">Read More</a>
+    const renderCards = posts => posts.map(post => {
+        const maxLength = 120; // characters
+        const summary = post.summary.length > maxLength
+            ? post.summary.slice(0, maxLength).trim() + "..."
+            : post.summary;
+    
+        return `
+            <div class="col-md-4 d-flex">
+                <div class="card blog-card h-100 flex-fill">
+                    <img class="card-img-top" src="${post.image}" alt="Story Image">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">${post.title}</h5>
+                        <p class="card-text flex-grow-1">${summary}</p>
+                        <a href="#/blog?id=${post.id}" class="btn btn-success mt-auto">Read More</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 
     container.innerHTML = `
         <section class="featured-stories">
