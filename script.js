@@ -9,7 +9,10 @@ const blogPosts = [
         caption: "Running can change your life.",
         content: "When addiction got the best of me, I chose a lifestyle that transformed everything...",
         summary: "When addiction got a better of me, I have chosen a lifestyle which changed me forever.",
-        category: "featured"
+        category: "featured",
+        tag: "lifestyle",
+        likes: 12,
+        dislikes: 2
     },
     {
         id: 2,
@@ -21,7 +24,10 @@ const blogPosts = [
         caption: "My peaceful green retreat.",
         content: "Who doesn't like relaxing surrounded by the greenery of self-grown vegetables...",
         summary: "Who does not like to relax with the scenery of fresh vegetables you cared for.",
-        category: "featured"
+        category: "featured",
+        tag: "home",
+        likes: 12,
+        dislikes: 2
     },
     {
         id: 3,
@@ -33,7 +39,10 @@ const blogPosts = [
         caption: "Yes, cereal really helped.",
         content: "Nobody believed it until I showed them the truth about cereal power...",
         summary: "Nobody believed me until I showed the results of eating better.",
-        category: "featured"
+        category: "featured",
+        tag: "funny",
+        likes: 12,
+        dislikes: 2
     },
     {
         id: 4,
@@ -45,7 +54,10 @@ const blogPosts = [
         caption: "Focus wins games.",
         content: "Step 1, keep your mind clear and focus...",
         summary: "Step 1, keep your mind clear and focus.",
-        category: "latest"
+        category: "latest",
+        tag: "gaming",
+        likes: 12,
+        dislikes: 2
     },
     {
         id: 5,
@@ -57,7 +69,10 @@ const blogPosts = [
         caption: "The sauce makes the dish.",
         content: "With a small amount of this secret sauce, anything is possible...",
         summary: "With a small amount of this secret sauce, anything is possible.",
-        category: "latest"
+        category: "latest",
+        tag: "cooking",
+        likes: 12,
+        dislikes: 2
     },
     {
         id: 6,
@@ -69,7 +84,10 @@ const blogPosts = [
         caption: "Believe in the heart of the cards.",
         content: "My win percentage doubled after using these cards...",
         summary: "My win percentage doubled after getting those cards.",
-        category: "latest"
+        category: "latest",
+        tag: "gaming",
+        likes: 12,
+        dislikes: 2
     }
 ];
 
@@ -99,6 +117,10 @@ window.onload = function () {
             return;
         }
 
+        if (page === 'create-blog') {
+            attachCreateBlogListener();
+        }
+
 
         fetch(url).then(response => {
             if (response.ok) {
@@ -116,6 +138,7 @@ window.onload = function () {
                 setTimeout(renderProfilePage, 0);
             }
             attachLogoutListener();
+            attachCreateBlogListener();
         }).catch(error => {
             console.error('Failed to load page', error);
             container.innerHTML = 'Error loading page.';
@@ -143,6 +166,43 @@ window.onload = function () {
                 navigateTo('profile');
             });
         }
+    }
+
+    function attachCreateBlogListener() {
+        const form = document.getElementById("createBlogForm");
+        if (!form) return;
+    
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const title = form.blogTitle.value.trim();
+            const description = form.blogDescription.value.trim();
+            const category = form.blogCategory.value;
+    
+            if (!title || !description || !category) {
+                alert("Please fill in all fields.");
+                return;
+            }
+    
+            const newPost = {
+                id: blogPosts.length + 1,
+                title,
+                author: "John Doe",
+                avatar: "images/avatar.jpg",
+                date: new Date().toISOString().split('T')[0],
+                image: "images/default.jpg",
+                caption: "New blog post",
+                content: description,
+                summary: description.length > 120 ? description.slice(0, 120) + "..." : description,
+                category, // featured/latest
+                tag,
+                likes: 0,
+                dislikes: 0
+            };
+    
+            blogPosts.unshift(newPost);
+            alert("Blog published!");
+            window.location.hash = "#/profile";
+        });
     }
 
     function attachLogoutListener() {

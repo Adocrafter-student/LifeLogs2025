@@ -1,0 +1,50 @@
+<div class="container my-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 mb-4">
+            <div class="card p-3">
+                <h5 class="mb-3">Tips</h5>
+                <p class="small text-muted">Pick a catchy title and write from the heart.</p>
+                <p class="small text-muted">Use a short summary, relevant tags, and a great cover image (coming soon).</p>
+            </div>
+        </div>
+
+        <!-- Blog Form -->
+        <div class="col-md-9">
+            <div class="card p-4">
+                <h3 class="mb-4">Create New Blog</h3>
+                <form id="createBlogForm">
+                    <div class="form-group">
+                        <label for="blogTitle">Title</label>
+                        <input type="text" class="form-control" id="blogTitle" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="blogDescription">Description</label>
+                        <textarea class="form-control" id="blogDescription" name="description" rows="5" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="blogTag">Tag</label>
+                        <select class="form-control" id="blogTag" name="tag" required>
+                            <option value="">Select Tag</option>
+                            <option value="lifestyle">Lifestyle</option>
+                            <option value="tech">Tech</option>
+                            <option value="funny">Funny</option>
+                            <option value="home">Home & Garden</option>
+                            <option value="personal">Personal</option>
+                            <option value="gaming">Gaming</option>
+                            <option value="cooking">Cooking</option>
+                            <option value="cards">Cards</option>
+                            <option value="inspiration">Inspiration</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="blogImage">Image (placeholder)</label>
+                        <input type="file" class="form-control-file" id="blogImage" name="image" accept="image/*" disabled>
+                        <small class="form-text text-muted">Image upload not supported yet.</small>
+                    </div>
+                    <button type="submit" class="btn btn-success mt-3">Publish Blog</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

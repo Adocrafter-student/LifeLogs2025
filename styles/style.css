@@ -307,3 +307,7 @@ p {
 .blog-card .card-body {
     min-height: 220px;
 }
+
+form label {
+    font-weight: 500;
+}
