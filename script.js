@@ -252,47 +252,85 @@ function renderBlogPage(blogId) {
     container.innerHTML = `
     <div class="container mt-5 mb-5">
         <div class="row">
+            <!-- Blog Content -->
             <div class="col-lg-8">
                 <article class="blog-post">
                     <header class="blog-post-header">
                         <h1 class="title">${post.title}</h1>
-                        <div class="meta d-flex align-items-center">
-                            <img src="${post.avatar}" alt="Author's avatar" class="author-avatar mr-2">
-                            <div>
-                                <p class="mb-0">
-                                    Posted by <a href="#">${post.author}</a>
-                                </p>
-                                <small><time datetime="${post.date}">${post.date}</time></small>
-                            </div>
+                        <div class="meta">
+                            <a href="#"><img src="${post.avatar}" alt="Author's avatar" class="author-avatar"></a>
+                            <p>
+                                Posted by <a href="#">${post.author}</a>
+                                on <time datetime="${post.date}">${post.date}</time>
+                            </p>
                         </div>
                     </header>
-
-                    <figure class="blog-post-image mt-4">
-                        <img src="${post.image}" alt="Blog image" class="img-fluid w-100">
-                        <figcaption class="mt-2">${post.caption}</figcaption>
+                    <figure class="blog-post-image">
+                        <img src="${post.image}" alt="Blog image" class="img-fluid">
+                        <figcaption>${post.caption}</figcaption>
                     </figure>
-
-                    <section class="blog-post-content mt-4">
+                    <section class="blog-post-content">
                         <p>${post.content}</p>
                         <hr>
+                        <p><strong>Tag:</strong> #${post.tag}</p>
                         <p>
-                            <span class="badge ${getTagBadgeColor(post.tag)}">#${post.tag}</span>
-                        </p>
-                        <p>
-                            <button class="btn btn-light btn-sm like-btn" data-id="${post.id}">
+                            <button class="btn btn-sm btn-light like-btn" data-id="${post.id}">
                                 <img src="images/icons/like.svg" alt="Like" style="width: 18px;"> ${post.likes}
                             </button>
-                            <button class="btn btn-light btn-sm dislike-btn" data-id="${post.id}">
+                            <button class="btn btn-sm btn-light dislike-btn" data-id="${post.id}">
                                 <img src="images/icons/dislike.svg" alt="Dislike" style="width: 18px;"> ${post.dislikes}
+                            </button>
+                            <button class="btn btn-sm btn-light disabled ml-2">
+                                <img src="images/icons/comment.svg" alt="Comment" style="width: 18px;"> 3
                             </button>
                         </p>
                     </section>
                 </article>
             </div>
+
+            <!-- Comments Sidebar -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm p-3 mb-4">
+                    <h5 class="mb-3">Comments</h5>
+                    <div class="media mb-3">
+                        <img src="images/avatar.jpg" alt="User" class="mr-3 rounded-circle" width="40">
+                        <div class="media-body">
+                            <h6 class="mt-0 mb-1">Alice</h6>
+                            Really inspiring story, thanks for sharing!
+                        </div>
+                    </div>
+                    <div class="media mb-3">
+                        <img src="images/avatar.jpg" alt="User" class="mr-3 rounded-circle" width="40">
+                        <div class="media-body">
+                            <h6 class="mt-0 mb-1">Bob</h6>
+                            This gave me some motivation to start again.
+                        </div>
+                    </div>
+                    <div class="media mb-3">
+                        <img src="images/avatar.jpg" alt="User" class="mr-3 rounded-circle" width="40">
+                        <div class="media-body">
+                            <h6 class="mt-0 mb-1">Charlie</h6>
+                            Would love to hear more about your process.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leave a Comment Form -->
+                <div class="card shadow-sm p-3">
+                    <h5 class="mb-3">Leave a Comment</h5>
+                    <form>
+                        <div class="form-group">
+                            <label for="commentText">Comment</label>
+                            <textarea class="form-control" id="commentText" rows="3" placeholder="Your comment..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm" disabled>Submit (Coming Soon)</button>
+                    </form>
+                </div>
+            </div>
         </div>
-    </div>
-`;
-document.title = `${post.title} | LifeLogs2025`;
+    </div>`;
+
+    document.title = `${post.title} | LifeLogs2025`;
 }
 
 function renderBlogSections() {
@@ -322,6 +360,9 @@ function renderBlogSections() {
                                 </button>
                                 <button class="btn btn-light btn-sm dislike-btn" data-id="${post.id}">
                                     <img src="images/icons/dislike.svg" alt="Dislike" style="width: 18px;"> ${post.dislikes}
+                                </button>
+                                <button class="btn btn-sm btn-light disabled ml-2">
+                                    <img src="images/icons/comment.svg" alt="Comment" style="width: 18px;"> 3
                                 </button>
                             </div>
                             <a href="#/blog?id=${post.id}" class="btn btn-success btn-sm">Read More</a>
