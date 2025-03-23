@@ -156,6 +156,18 @@ window.onload = function () {
     window.addEventListener('hashchange', handleNavigation);
     handleNavigation();
 
+    document.addEventListener("click", function (e) {
+        if (e.target.closest(".like-btn")) {
+            const id = e.target.closest(".like-btn").dataset.id;
+            console.log(`Like clicked on blog ${id}`);
+        }
+    
+        if (e.target.closest(".dislike-btn")) {
+            const id = e.target.closest(".dislike-btn").dataset.id;
+            console.log(`Dislike clicked on blog ${id}`);
+        }
+    });
+
     function attachFormListener(page) {
         const form = document.querySelector('form');
         if (form) {
@@ -227,29 +239,49 @@ function renderBlogPage(blogId) {
     }
 
     container.innerHTML = `
-        <div class="container mt-5 mb-5">
-            <div class="row">
-                <div class="col-lg-8">
-                    <article class="blog-post">
-                        <header class="blog-post-header">
-                            <h1 class="title">${post.title}</h1>
-                            <div class="meta">
-                                <a href="#"><img src="${post.avatar}" alt="Author's avatar" class="author-avatar"></a>
-                                <p>Posted by <a href="#">${post.author}</a> on <time datetime="${post.date}">${post.date}</time></p>
+    <div class="container mt-5 mb-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <article class="blog-post">
+                    <header class="blog-post-header">
+                        <h1 class="title">${post.title}</h1>
+                        <div class="meta d-flex align-items-center">
+                            <img src="${post.avatar}" alt="Author's avatar" class="author-avatar mr-2">
+                            <div>
+                                <p class="mb-0">
+                                    Posted by <a href="#">${post.author}</a>
+                                </p>
+                                <small><time datetime="${post.date}">${post.date}</time></small>
                             </div>
-                        </header>
-                        <figure class="blog-post-image">
-                            <img src="${post.image}" alt="Blog image" class="img-fluid">
-                            <figcaption>${post.caption}</figcaption>
-                        </figure>
-                        <section class="blog-post-content">
-                            <p>${post.content}</p>
-                        </section>
-                    </article>
-                </div>
+                        </div>
+                    </header>
+
+                    <figure class="blog-post-image mt-4">
+                        <img src="${post.image}" alt="Blog image" class="img-fluid w-100">
+                        <figcaption class="mt-2">${post.caption}</figcaption>
+                    </figure>
+
+                    <section class="blog-post-content mt-4">
+                        <p>${post.content}</p>
+                        <hr>
+                        <p>
+                            <span class="badge ${getTagBadgeColor(post.tag)}">#${post.tag}</span>
+                        </p>
+                        <p>
+                            <button class="btn btn-light btn-sm like-btn" data-id="${post.id}">
+                                <img src="images/icons/like.svg" alt="Like" style="width: 18px;"> ${post.likes}
+                            </button>
+                            <button class="btn btn-light btn-sm dislike-btn" data-id="${post.id}">
+                                <img src="images/icons/dislike.svg" alt="Dislike" style="width: 18px;"> ${post.dislikes}
+                            </button>
+                        </p>
+                    </section>
+                </article>
             </div>
-        </div>`;
-    document.title = `${post.title} | LifeLogs2025`;
+        </div>
+    </div>
+`;
+document.title = `${post.title} | LifeLogs2025`;
 }
 
 function renderBlogSections() {
@@ -259,7 +291,7 @@ function renderBlogSections() {
     const latest = blogPosts.filter(post => post.category === "latest");
 
     const renderCards = posts => posts.map(post => {
-        const maxLength = 120; // characters
+        const maxLength = 120;
         const summary = post.summary.length > maxLength
             ? post.summary.slice(0, maxLength).trim() + "..."
             : post.summary;
@@ -270,8 +302,19 @@ function renderBlogSections() {
                     <img class="card-img-top" src="${post.image}" alt="Story Image">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">${post.title}</h5>
+                        <span class="badge mb-2 ${getTagBadgeColor(post.tag)}">#${post.tag}</span>
                         <p class="card-text flex-grow-1">${summary}</p>
-                        <a href="#/blog?id=${post.id}" class="btn btn-success mt-auto">Read More</a>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <button class="btn btn-light btn-sm like-btn" data-id="${post.id}">
+                                    <img src="images/icons/like.svg" alt="Like" style="width: 18px;"> ${post.likes}
+                                </button>
+                                <button class="btn btn-light btn-sm dislike-btn" data-id="${post.id}">
+                                    <img src="images/icons/dislike.svg" alt="Dislike" style="width: 18px;"> ${post.dislikes}
+                                </button>
+                            </div>
+                            <a href="#/blog?id=${post.id}" class="btn btn-success btn-sm">Read More</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -350,5 +393,19 @@ function renderProfilePage() {
                 </a>
             `).join('')
             : `<p class="text-muted">You haven't written any blogs yet.</p>`;
+    }
+}
+
+
+function getTagBadgeColor(tag) {
+    switch (tag.toLowerCase()) {
+        case "tech": return "badge-primary";
+        case "lifestyle": return "badge-success";
+        case "funny": return "badge-warning text-dark";
+        case "home": return "badge-info";
+        case "gaming": return "badge-danger";
+        case "cooking": return "badge-dark";
+        case "inspiration": return "badge-light text-dark";
+        default: return "badge-secondary";
     }
 }
