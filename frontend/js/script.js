@@ -3,9 +3,9 @@ const blogPosts = [
         id: 1,
         title: "How running 10 miles a day changed my life forever",
         author: "John Doe",
-        avatar: "images/avatar.jpg",
+        avatar: "frontend/static-assets/images/avatar.jpg",
         date: "2024-01-01",
-        image: "images/running-guy.jpg",
+        image: "frontend/static-assets/images/running-guy.jpg",
         caption: "Running can change your life.",
         content: "When addiction got the best of me, I chose a lifestyle that transformed everything...",
         summary: "When addiction got a better of me, I have chosen a lifestyle which changed me forever.",
@@ -18,9 +18,9 @@ const blogPosts = [
         id: 2,
         title: "Quick peek inside of my little garden",
         author: "Jennifer Farrah",
-        avatar: "images/avatar.jpg",
+        avatar: "frontend/static-assets/images/avatar.jpg",
         date: "2023-12-11",
-        image: "images/gardening.jpg",
+        image: "frontend/static-assets/images/gardening.jpg",
         caption: "My peaceful green retreat.",
         content: "Who doesn't like relaxing surrounded by the greenery of self-grown vegetables...",
         summary: "Who does not like to relax with the scenery of fresh vegetables you cared for.",
@@ -33,9 +33,9 @@ const blogPosts = [
         id: 3,
         title: "How I beat David Goggins by eating cereal",
         author: "Anonymous",
-        avatar: "images/avatar.jpg",
+        avatar: "frontend/static-assets/images/avatar.jpg",
         date: "2024-02-01",
-        image: "images/david-goggings.jpg",
+        image: "frontend/static-assets/images/david-goggings.jpg",
         caption: "Yes, cereal really helped.",
         content: "Nobody believed it until I showed them the truth about cereal power...",
         summary: "Nobody believed me until I showed the results of eating better.",
@@ -48,9 +48,9 @@ const blogPosts = [
         id: 4,
         title: "How I won by playing the objective",
         author: "GamerX",
-        avatar: "images/avatar.jpg",
+        avatar: "frontend/static-assets/images/avatar.jpg",
         date: "2024-02-05",
-        image: "images/objective.jpg",
+        image: "frontend/static-assets/images/objective.jpg",
         caption: "Focus wins games.",
         content: "Step 1, keep your mind clear and focus...",
         summary: "Step 1, keep your mind clear and focus.",
@@ -63,9 +63,9 @@ const blogPosts = [
         id: 5,
         title: "This cooking recipe changed my life",
         author: "Chef Gordon",
-        avatar: "images/avatar.jpg",
+        avatar: "frontend/static-assets/images/avatar.jpg",
         date: "2024-02-08",
-        image: "images/gordon.jpg",
+        image: "frontend/static-assets/images/gordon.jpg",
         caption: "The sauce makes the dish.",
         content: "With a small amount of this secret sauce, anything is possible...",
         summary: "With a small amount of this secret sauce, anything is possible.",
@@ -78,9 +78,9 @@ const blogPosts = [
         id: 6,
         title: "How this Yu-Gi-Oh deck boosted my wins",
         author: "Yami",
-        avatar: "images/avatar.jpg",
+        avatar: "frontend/static-assets/images/avatar.jpg",
         date: "2024-02-10",
-        image: "images/yugio.jpg",
+        image: "frontend/static-assets/images/yugio.jpg",
         caption: "Believe in the heart of the cards.",
         content: "My win percentage doubled after using these cards...",
         summary: "My win percentage doubled after getting those cards.",
@@ -104,7 +104,7 @@ window.onload = function () {
     function loadPage(page) {
         const container = document.getElementById("container");
         const basePath = window.location.href.includes('localhost') ? '/LifeLogs2025/' : '/';
-        const url = `${basePath}${page}.html`;
+        const url = `${basePath}frontend/views/${page}.html`;
 
         if (page.startsWith('blog')) {
             const blogId = new URLSearchParams(window.location.hash.split('?')[1]).get('id');
@@ -122,7 +122,7 @@ window.onload = function () {
         }
 
         if (page === 'all-blogs') {
-            fetch('all-blogs.html')
+            fetch(`${basePath}frontend/views/all-blogs.html`)
                 .then(res => res.text())
                 .then(html => {
                     document.getElementById('container').innerHTML = html;
@@ -137,7 +137,7 @@ window.onload = function () {
             if (response.ok) {
                 return response.text();
             } else {
-                return fetch(`${basePath}404.html`).then(response => response.ok ? response.text() : 'Page not found');
+                return fetch(`${basePath}frontend/views/404.html`).then(response => response.ok ? response.text() : 'Page not found');
             }
         }).then(html => {
             container.innerHTML = html;
@@ -210,9 +210,9 @@ window.onload = function () {
                 id: blogPosts.length + 1,
                 title,
                 author: "John Doe",
-                avatar: "images/avatar.jpg",
+                avatar: "frontend/static-assets/images/avatar.jpg",
                 date: new Date().toISOString().split('T')[0],
-                image: "images/default.jpg",
+                image: "frontend/static-assets/images/default.jpg",
                 caption: "New blog post",
                 content: description,
                 summary: description.length > 120 ? description.slice(0, 120) + "..." : description,
@@ -275,13 +275,13 @@ function renderBlogPage(blogId) {
                         <p><strong>Tag:</strong> #${post.tag}</p>
                         <p>
                             <button class="btn btn-sm btn-light like-btn" data-id="${post.id}">
-                                <img src="images/icons/like.svg" alt="Like" style="width: 18px;"> ${post.likes}
+                                <img src="frontend/static-assets/images/icons/like.svg" alt="Like" style="width: 18px;"> ${post.likes}
                             </button>
                             <button class="btn btn-sm btn-light dislike-btn" data-id="${post.id}">
-                                <img src="images/icons/dislike.svg" alt="Dislike" style="width: 18px;"> ${post.dislikes}
+                                <img src="frontend/static-assets/images/icons/dislike.svg" alt="Dislike" style="width: 18px;"> ${post.dislikes}
                             </button>
                             <button class="btn btn-sm btn-light disabled ml-2">
-                                <img src="images/icons/comment.svg" alt="Comment" style="width: 18px;"> 3
+                                <img src="frontend/static-assets/images/icons/comment.svg" alt="Comment" style="width: 18px;"> 3
                             </button>
                         </p>
                     </section>
@@ -293,21 +293,21 @@ function renderBlogPage(blogId) {
                 <div class="card shadow-sm p-3 mb-4">
                     <h5 class="mb-3">Comments</h5>
                     <div class="media mb-3">
-                        <img src="images/avatar.jpg" alt="User" class="mr-3 rounded-circle" width="40">
+                        <img src="frontend/static-assets/images/avatar.jpg" alt="User" class="mr-3 rounded-circle" width="40">
                         <div class="media-body">
                             <h6 class="mt-0 mb-1">Alice</h6>
                             Really inspiring story, thanks for sharing!
                         </div>
                     </div>
                     <div class="media mb-3">
-                        <img src="images/avatar.jpg" alt="User" class="mr-3 rounded-circle" width="40">
+                        <img src="frontend/static-assets/images/avatar.jpg" alt="User" class="mr-3 rounded-circle" width="40">
                         <div class="media-body">
                             <h6 class="mt-0 mb-1">Bob</h6>
                             This gave me some motivation to start again.
                         </div>
                     </div>
                     <div class="media mb-3">
-                        <img src="images/avatar.jpg" alt="User" class="mr-3 rounded-circle" width="40">
+                        <img src="frontend/static-assets/images/avatar.jpg" alt="User" class="mr-3 rounded-circle" width="40">
                         <div class="media-body">
                             <h6 class="mt-0 mb-1">Charlie</h6>
                             Would love to hear more about your process.
@@ -356,13 +356,13 @@ function renderBlogSections() {
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <button class="btn btn-light btn-sm like-btn" data-id="${post.id}">
-                                    <img src="images/icons/like.svg" alt="Like" style="width: 18px;"> ${post.likes}
+                                    <img src="frontend/static-assets/images/icons/like.svg" alt="Like" style="width: 18px;"> ${post.likes}
                                 </button>
                                 <button class="btn btn-light btn-sm dislike-btn" data-id="${post.id}">
-                                    <img src="images/icons/dislike.svg" alt="Dislike" style="width: 18px;"> ${post.dislikes}
+                                    <img src="frontend/static-assets/images/icons/dislike.svg" alt="Dislike" style="width: 18px;"> ${post.dislikes}
                                 </button>
                                 <button class="btn btn-sm btn-light disabled ml-2">
-                                    <img src="images/icons/comment.svg" alt="Comment" style="width: 18px;"> 3
+                                    <img src="frontend/static-assets/images/icons/comment.svg" alt="Comment" style="width: 18px;"> 3
                                 </button>
                             </div>
                             <a href="#/blog?id=${post.id}" class="btn btn-success btn-sm">Read More</a>
@@ -401,7 +401,7 @@ function renderProfilePage() {
     const username = "John Doe";
     const email = "john@example.com";
     const bio = "I write to remember, I share to inspire.";
-    const avatar = "images/avatar.jpg"; 
+    const avatar = "frontend/static-assets/images/avatar.jpg"; 
 
     const u = document.getElementById('profileUsername');
     const e = document.getElementById('profileEmail');
@@ -477,10 +477,10 @@ function renderAllBlogsPage() {
                     <div class="mt-auto d-flex justify-content-between align-items-center">
                         <div>
                             <button class="btn btn-light btn-sm like-btn" data-id="${post.id}">
-                                <img src="images/icons/like.svg" alt="Like" style="width: 18px;"> ${post.likes}
+                                <img src="frontend/static-assets/images/icons/like.svg" alt="Like" style="width: 18px;"> ${post.likes}
                             </button>
                             <button class="btn btn-light btn-sm dislike-btn" data-id="${post.id}">
-                                <img src="images/icons/dislike.svg" alt="Dislike" style="width: 18px;"> ${post.dislikes}
+                                <img src="frontend/static-assets/images/icons/dislike.svg" alt="Dislike" style="width: 18px;"> ${post.dislikes}
                             </button>
                         </div>
                         <a href="#/blog?id=${post.id}" class="btn btn-success btn-sm">Read More</a>
