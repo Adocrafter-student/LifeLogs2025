@@ -121,6 +121,17 @@ window.onload = function () {
             attachCreateBlogListener();
         }
 
+        if (page === 'all-blogs') {
+            fetch('all-blogs.html')
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById('container').innerHTML = html;
+                    renderAllBlogsPage();
+                    document.title = "All Blogs | LifeLogs2025";
+                });
+            return;
+        }
+
 
         fetch(url).then(response => {
             if (response.ok) {
@@ -408,4 +419,33 @@ function getTagBadgeColor(tag) {
         case "inspiration": return "badge-light text-dark";
         default: return "badge-secondary";
     }
+}
+
+function renderAllBlogsPage() {
+    const blogList = document.getElementById("allBlogList");
+    if (!blogList) return;
+
+    blogList.innerHTML = blogPosts.map(post => `
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <img class="card-img-top" src="${post.image}" alt="${post.title}">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">${post.title}</h5>
+                    <span class="badge ${getTagBadgeColor(post.tag)} mb-2">#${post.tag}</span>
+                    <p class="card-text text-truncate-3">${post.summary}</p>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <div>
+                            <button class="btn btn-light btn-sm like-btn" data-id="${post.id}">
+                                <img src="images/icons/like.svg" alt="Like" style="width: 18px;"> ${post.likes}
+                            </button>
+                            <button class="btn btn-light btn-sm dislike-btn" data-id="${post.id}">
+                                <img src="images/icons/dislike.svg" alt="Dislike" style="width: 18px;"> ${post.dislikes}
+                            </button>
+                        </div>
+                        <a href="#/blog?id=${post.id}" class="btn btn-success btn-sm">Read More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join("");
 }
