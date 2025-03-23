@@ -85,7 +85,8 @@ window.onload = function () {
 
     function loadPage(page) {
         const container = document.getElementById("container");
-        const basePath = window.location.href.includes('localhost') ? '/LifeLogs/' : '/';
+        const basePath = window.location.href.includes('localhost') ? '/LifeLogs2025/' : '/';
+        const url = `${basePath}${page}.html`;
 
         if (page.startsWith('blog')) {
             const blogId = new URLSearchParams(window.location.hash.split('?')[1]).get('id');
@@ -98,7 +99,6 @@ window.onload = function () {
             return;
         }
 
-        const url = `${basePath}${page}.html`;
 
         fetch(url).then(response => {
             if (response.ok) {
@@ -108,9 +108,12 @@ window.onload = function () {
             }
         }).then(html => {
             container.innerHTML = html;
-            document.title = page.charAt(0).toUpperCase() + page.slice(1) + " | LifeLogs";
+            document.title = page.charAt(0).toUpperCase() + page.slice(1) + " | LifeLogs2025";
             if (page === 'login' || page === 'registration') {
                 attachFormListener(page);
+            }
+            if (page === 'profile') {
+                setTimeout(renderProfilePage, 0);
             }
             attachLogoutListener();
         }).catch(error => {
@@ -159,7 +162,7 @@ function renderBlogPage(blogId) {
 
     if (!post) {
         container.innerHTML = "<p>Blog post not found.</p>";
-        document.title = "Blog Not Found | LifeLogs";
+        document.title = "Blog Not Found | LifeLogs2025";
         return;
     }
 
@@ -186,7 +189,7 @@ function renderBlogPage(blogId) {
                 </div>
             </div>
         </div>`;
-    document.title = `${post.title} | LifeLogs`;
+    document.title = `${post.title} | LifeLogs2025`;
 }
 
 function renderBlogSections() {
@@ -228,5 +231,57 @@ function renderBlogSections() {
         </section>
     `;
 
-    document.title = "Featured | LifeLogs";
+    document.title = "Featured | LifeLogs2025";
+}
+
+function renderProfilePage() {
+    // TEMP: to be replaced with backend data
+    const username = "John Doe";
+    const email = "john@example.com";
+    const bio = "I write to remember, I share to inspire.";
+    const avatar = "images/avatar.jpg"; 
+
+    const u = document.getElementById('profileUsername');
+    const e = document.getElementById('profileEmail');
+    const b = document.getElementById('profileBio');
+    const img = document.getElementById('profilePicture');
+
+    if (u && e && b && img) {
+        u.innerText = username;
+        e.innerText = email;
+        b.innerText = bio;
+        img.src = avatar;
+        img.alt = `${username}'s profile picture`;
+    }
+
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const bioInput = document.getElementById('bio');
+
+    if (usernameInput && emailInput && bioInput) {
+        usernameInput.value = username;
+        emailInput.value = email;
+        bioInput.value = bio;
+    }
+
+    // Show user's blogs
+    const userBlogs = blogPosts.filter(b => b.author === username);
+    const blogList = document.getElementById('userBlogs');
+
+    if (blogList) {
+        blogList.innerHTML = userBlogs.length
+            ? userBlogs.map(post => `
+                <a href="#/blog?id=${post.id}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">${post.title}</h5>
+                        <small class="text-muted">${post.date}</small>
+                    </div>
+                    <p class="mb-1">${post.summary}</p>
+                    <small class="text-muted d-block">
+                        <a href="#/user?id=${encodeURIComponent(post.author)}" class="text-muted">by ${post.author}</a>
+                    </small>
+                </a>
+            `).join('')
+            : `<p class="text-muted">You haven't written any blogs yet.</p>`;
+    }
 }
