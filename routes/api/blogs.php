@@ -1,34 +1,42 @@
 <?php
 header('Content-Type: application/json');
-require_once '../../config/database.php';
-require_once '../../services/BlogService.php';
+require_once __DIR__ . '/../../dao/BlogDao.php';
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-$database = new Database();
-$db = $database->getConnection();
-$blogService = new BlogService($db);
+$blogDao = new BlogDao();
 
 $action = $_GET['action'] ?? '';
 
 switch($action) {
     case 'featured':
-        $blogs = $blogService->getFeaturedBlogs();
-        foreach($blogs as &$blog) {
-            error_log("Original image_url: " . $blog['image_url']);
-            error_log("Original author_avatar: " . $blog['author_avatar']);
-        }
+        $blogs = $blogDao->getFeaturedBlogs();
         echo json_encode($blogs);
         break;
         
     case 'latest':
-        $blogs = $blogService->getLatestBlogs();
-        foreach($blogs as &$blog) {
-            error_log("Original image_url: " . $blog['image_url']);
-            error_log("Original author_avatar: " . $blog['author_avatar']);
-        }
+        $blogs = $blogDao->getLatestBlogs();
         echo json_encode($blogs);
+        break;
+        
+    case 'get':
+        $id = $_GET['id'] ?? null;
+        if ($id) {
+            $blog = $blogDao->getBlogWithUser($id);
+            echo json_encode($blog);
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'ID is required']);
+        }
+        break;
+        
+    case 'category':
+        $category = $_GET['category'] ?? null;
+        if ($category) {
+            $blogs = $blogDao->getBlogsByCategory($category);
+            echo json_encode($blogs);
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Category is required']);
+        }
         break;
         
     default:

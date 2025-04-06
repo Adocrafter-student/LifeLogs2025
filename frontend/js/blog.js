@@ -53,8 +53,27 @@ export async function initializeBlog() {
     });
 }
 
-export function getBlogPostById(id) {
-    return blogPosts.find(post => post.id === id);
+export async function getBlogPostById(id) {
+    try {
+        const response = await fetch(`/LifeLogs2025/routes/api/blogs.php?action=get&id=${id}`);
+        const blog = await response.json();
+        
+        if (blog) {
+            return {
+                ...blog,
+                image_url: formatImagePath(blog.image_url),
+                author_avatar: formatImagePath(blog.author_avatar),
+                image: formatImagePath(blog.image_url),
+                avatar: formatImagePath(blog.author_avatar),
+                author: blog.username,
+                date: blog.created_at.split(' ')[0]
+            };
+        }
+        return null;
+    } catch (error) {
+        console.error('Error fetching blog post:', error);
+        return null;
+    }
 }
 
 export function getBlogPostsByCategory(category) {

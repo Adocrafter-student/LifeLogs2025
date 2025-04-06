@@ -87,11 +87,11 @@ function attachCreateBlogListener() {
     });
 }
 
-export function renderBlogPage(blogId) {
-    const post = getBlogPostById(blogId);
+export async function renderBlogPage(id) {
+    const blogPost = await getBlogPostById(id);
     const container = document.getElementById("container");
-
-    if (!post) {
+    
+    if (!blogPost) {
         container.innerHTML = "<p>Blog post not found.</p>";
         document.title = "Blog Not Found | LifeLogs2025";
         return;
@@ -104,29 +104,29 @@ export function renderBlogPage(blogId) {
             <div class="col-lg-8">
                 <article class="blog-post">
                     <header class="blog-post-header">
-                        <h1 class="title">${post.title}</h1>
+                        <h1 class="title">${blogPost.title}</h1>
                         <div class="meta">
-                            <a href="#"><img src="${post.avatar}" alt="Author's avatar" class="author-avatar"></a>
+                            <a href="#"><img src="${blogPost.avatar}" alt="Author's avatar" class="author-avatar"></a>
                             <p>
-                                Posted by <a href="#">${post.author}</a>
-                                on <time datetime="${post.date}">${post.date}</time>
+                                Posted by <a href="#">${blogPost.author}</a>
+                                on <time datetime="${blogPost.date}">${blogPost.date}</time>
                             </p>
                         </div>
                     </header>
                     <figure class="blog-post-image">
-                        <img src="${post.image}" alt="Blog image" class="img-fluid">
-                        <figcaption>${post.caption}</figcaption>
+                        <img src="${blogPost.image}" alt="Blog image" class="img-fluid">
+                        <figcaption>${blogPost.caption}</figcaption>
                     </figure>
                     <section class="blog-post-content">
-                        <p>${post.content}</p>
+                        <p>${blogPost.content}</p>
                         <hr>
-                        <p><strong>Tag:</strong> #${post.tag}</p>
+                        <p><strong>Tag:</strong> <span class="badge ${getTagBadgeColor(blogPost.tag)}">#${blogPost.tag}</span></p>
                         <p>
-                            <button class="btn btn-sm btn-light like-btn" data-id="${post.id}">
-                                <img src="frontend/static-assets/images/icons/like.svg" alt="Like" style="width: 18px;"> ${post.likes}
+                            <button class="btn btn-sm btn-light like-btn" data-id="${blogPost.id}">
+                                <img src="frontend/static-assets/images/icons/like.svg" alt="Like" style="width: 18px;"> ${blogPost.likes}
                             </button>
-                            <button class="btn btn-sm btn-light dislike-btn" data-id="${post.id}">
-                                <img src="frontend/static-assets/images/icons/dislike.svg" alt="Dislike" style="width: 18px;"> ${post.dislikes}
+                            <button class="btn btn-sm btn-light dislike-btn" data-id="${blogPost.id}">
+                                <img src="frontend/static-assets/images/icons/dislike.svg" alt="Dislike" style="width: 18px;"> ${blogPost.dislikes}
                             </button>
                             <button class="btn btn-sm btn-light disabled ml-2">
                                 <img src="frontend/static-assets/images/icons/comment.svg" alt="Comment" style="width: 18px;"> 3
@@ -178,7 +178,7 @@ export function renderBlogPage(blogId) {
         </div>
     </div>`;
 
-    document.title = `${post.title} | LifeLogs2025`;
+    document.title = `${blogPost.title} | LifeLogs2025`;
 }
 
 export function renderBlogSections() {
