@@ -73,5 +73,20 @@ class LikeDislikeDao extends BaseDao {
         
         return $stmt->execute();
     }
+
+    /**
+     * Get all reactions for a blog post with user details
+     */
+    public function getReactionsByBlogId($blogId) {
+        $stmt = $this->conn->prepare("
+            SELECT ld.*, u.username, u.avatar_url as user_avatar 
+            FROM likes_dislikes ld 
+            JOIN users u ON ld.user_id = u.id 
+            WHERE ld.blog_id = :blog_id
+        ");
+        $stmt->bindParam(':blog_id', $blogId);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?> 

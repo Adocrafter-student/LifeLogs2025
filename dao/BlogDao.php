@@ -83,5 +83,42 @@ class BlogDao extends BaseDao {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Search blog posts by query
+     */
+    public function searchBlogs($query) {
+        $stmt = $this->conn->prepare("
+            SELECT b.*, u.username, u.avatar_url as author_avatar 
+            FROM blogs b 
+            JOIN users u ON b.user_id = u.id 
+            WHERE b.title LIKE :query 
+            OR b.summary LIKE :query 
+            OR b.content LIKE :query 
+            ORDER BY b.created_at DESC
+        ");
+        $searchQuery = "%$query%";
+        $stmt->bindParam(':query', $searchQuery);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get blog posts by tag
+     */
+    public function getBlogsByTag($tag) {
+        $stmt = $this->conn->prepare("
+            SELECT b.*, u.username, u.avatar_url as author_avatar 
+            FROM blogs b 
+            JOIN users u ON b.user_id = u.id 
+            JOIN blog_tags bt ON b.id = bt.blog_id 
+            JOIN tags t ON bt.tag_id = t.id 
+            WHERE t.name = :tag 
+            ORDER BY b.created_at DESC
+        ");
+        $stmt->bindParam(':tag', $tag);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?> 
