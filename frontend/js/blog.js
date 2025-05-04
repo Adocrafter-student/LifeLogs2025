@@ -11,12 +11,14 @@ function formatImagePath(path) {
 export async function initializeBlog() {
     try {
         const [featuredResponse, latestResponse] = await Promise.all([
-            fetch('/LifeLogs2025/routes/api/blogs.php?action=featured'),
-            fetch('/LifeLogs2025/routes/api/blogs.php?action=latest')
+            fetch('api/blogs?action=featured'),
+            fetch('api/blogs?action=latest')
         ]);
 
         const featuredBlogs = await featuredResponse.json();
         const latestBlogs = await latestResponse.json();
+
+        
 
         console.log("Originalni blog postovi:", [...featuredBlogs, ...latestBlogs]);
 
@@ -55,21 +57,22 @@ export async function initializeBlog() {
 
 export async function getBlogPostById(id) {
     try {
-        const response = await fetch(`/LifeLogs2025/routes/api/blogs.php?action=get&id=${id}`);
+        const response = await fetch(`/LifeLogs2025/api/blogs/${id}`);
+        if (!response.ok) {
+            console.error('API responded with status', response.status);
+            return null;
+        }
         const blog = await response.json();
         
-        if (blog) {
-            return {
-                ...blog,
-                image_url: formatImagePath(blog.image_url),
-                author_avatar: formatImagePath(blog.author_avatar),
-                image: formatImagePath(blog.image_url),
-                avatar: formatImagePath(blog.author_avatar),
-                author: blog.username,
-                date: blog.created_at.split(' ')[0]
-            };
-        }
-        return null;
+        return {
+            ...blog,
+            image_url: formatImagePath(blog.image_url),
+            author_avatar: formatImagePath(blog.author_avatar),
+            image: formatImagePath(blog.image_url),
+            avatar: formatImagePath(blog.author_avatar),
+            author: blog.username,
+            date: blog.created_at.split(' ')[0]
+        };
     } catch (error) {
         console.error('Error fetching blog post:', error);
         return null;

@@ -1,13 +1,9 @@
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /myapp/
+RewriteEngine On
 
-  RewriteRule ^(api|auth)(/.*)?$ index.php [L,QSA]
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
-  RewriteRule ^ - [L]
+# If the request matches a real file or folder, serve it directly
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
 
-  RewriteRule ^ index.html [L]
-</IfModule>
-
-DirectoryIndex index.html index.php
+# Otherwise, route everything to index.php
+RewriteRule ^(.*)$ index.php [QSA,L]

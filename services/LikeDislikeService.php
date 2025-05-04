@@ -9,15 +9,13 @@ class LikeDislikeService {
     }
 
     public function addLike($blog_id, $user_id) {
-        // Provjera da li korisnik već ima reakciju na blog
+        // Check if user already has a reaction on the blog
         $existing_reaction = $this->likeDislikeDao->getUserReaction($blog_id, $user_id);
         
         if ($existing_reaction) {
             if ($existing_reaction['is_like'] == 1) {
-                // Ako je već lajkovao, ukloni lajk
                 return $this->likeDislikeDao->removeReaction($blog_id, $user_id);
             } else {
-                // Ako je dislajkovao, promijeni u lajk
                 return $this->likeDislikeDao->addOrUpdate($blog_id, $user_id, 1);
             }
         }
@@ -26,15 +24,13 @@ class LikeDislikeService {
     }
 
     public function addDislike($blog_id, $user_id) {
-        // Provjera da li korisnik već ima reakciju na blog
+        // Check if user already has a reaction on the blog
         $existing_reaction = $this->likeDislikeDao->getUserReaction($blog_id, $user_id);
         
         if ($existing_reaction) {
             if ($existing_reaction['is_like'] == 0) {
-                // Ako je već dislajkovao, ukloni dislajk
                 return $this->likeDislikeDao->removeReaction($blog_id, $user_id);
             } else {
-                // Ako je lajkovao, promijeni u dislajk
                 return $this->likeDislikeDao->addOrUpdate($blog_id, $user_id, 0);
             }
         }
@@ -58,6 +54,17 @@ class LikeDislikeService {
 
     public function getReactionsByBlogId($blog_id) {
         return $this->likeDislikeDao->getReactionsByBlogId($blog_id);
+    }
+
+    public function removeReaction($blog_id, $user_id) {
+        // Check if user has a reaction on the blog
+        $existing_reaction = $this->likeDislikeDao->getUserReaction($blog_id, $user_id);
+        
+        if (!$existing_reaction) {
+            return false;
+        }
+
+        return $this->likeDislikeDao->removeReaction($blog_id, $user_id);
     }
 }
 ?> 
