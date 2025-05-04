@@ -11,23 +11,23 @@ class UserService {
     public function createUser($username, $email, $password, $bio = null, $avatar_url = null) {
         // Validacija
         if (empty($username) || empty($email) || empty($password)) {
-            throw new Exception("Sva obavezna polja moraju biti popunjena");
+            throw new Exception("All required fields must be filled");
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception("Nevažeća email adresa");
+            throw new Exception("Invalid email address");
         }
 
-        // Provjera da li korisnik već postoji
+        // Check if user already exists
         if ($this->userDao->getByUsername($username)) {
-            throw new Exception("Korisničko ime već postoji");
+            throw new Exception("Username already exists");
         }
 
         if ($this->userDao->getByEmail($email)) {
-            throw new Exception("Email adresa već postoji");
+            throw new Exception("Email address already exists");
         }
 
-        // Kreiranje korisnika kroz DAO
+        // create user through DAO
         return $this->userDao->register($username, $email, $password, $bio, $avatar_url);
     }
 
@@ -67,7 +67,7 @@ class UserService {
         }
 
         if (empty($params)) {
-            throw new Exception("Nema podataka za ažuriranje");
+            throw new Exception("No data to update");
         }
 
         return $this->userDao->update($id, $params);
@@ -92,6 +92,10 @@ class UserService {
 
     public function updateProfile($id, $bio, $avatar_url = null) {
         return $this->userDao->updateProfile($id, $bio, $avatar_url);
+    }
+
+    public function getAllUsers() {
+        return $this->userDao->getAll();
     }
 }
 ?> 
