@@ -185,6 +185,8 @@ export function renderBlogSections() {
     const container = document.getElementById("container");
     const featured = getBlogPostsByCategory("featured");
     const latest = getBlogPostsByCategory("latest");
+    console.log('🖌 renderBlogSections()', featured.length, latest.length);
+
 
     const renderCards = posts => posts.map(post => {
         const maxLength = 120;

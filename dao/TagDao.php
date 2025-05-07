@@ -8,30 +8,32 @@ class TagDao extends BaseDao {
     }
 
     /**
-     * Get or create tag by name
+     * Get or create a tag by name
      */
     public function getOrCreate($name) {
-        // First try to get existing tag
-        $stmt = $this->conn->prepare("SELECT * FROM tags WHERE name = :name");
-        $stmt->bindParam(':name', $name);
-        $stmt->execute();
-        $tag = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($tag) {
-            return $tag['id'];
+        $tag = $this->getTagByName($name);
+        if (!$tag) {
+            $tag = $this->add(['name' => $name]);
         }
-        
-        // If not exists, create new
-        return $this->add(['name' => $name]);
+        return $tag;
     }
 
     /**
-     * Get tags for a blog post
+     * Get tag by name
+     */
+    public function getTagByName($name) {
+        $stmt = $this->conn->prepare("SELECT * FROM tags WHERE name = :name");
+        $stmt->bindParam(':name', $name);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get tags for a blog
      */
     public function getTagsForBlog($blogId) {
         $stmt = $this->conn->prepare("
-            SELECT t.* 
-            FROM tags t 
+            SELECT t.* FROM tags t 
             JOIN blog_tags bt ON t.id = bt.tag_id 
             WHERE bt.blog_id = :blog_id
         ");
@@ -41,23 +43,28 @@ class TagDao extends BaseDao {
     }
 
     /**
-     * Add tags to a blog post
+     * Add tags to a blog
      */
     public function addTagsToBlog($blogId, $tagIds) {
-        $values = array_map(function($tagId) use ($blogId) {
-            return "($blogId, $tagId)";
-        }, $tagIds);
+        $values = [];
+        $params = [];
+        foreach ($tagIds as $index => $tagId) {
+            $values[] = "(:blog_id, :tag_id_$index)";
+            $params[":tag_id_$index"] = $tagId;
+        }
         
-        $stmt = $this->conn->prepare("
-            INSERT INTO blog_tags (blog_id, tag_id) 
-            VALUES " . implode(',', $values)
-        );
+        $sql = "INSERT INTO blog_tags (blog_id, tag_id) VALUES " . implode(',', $values);
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':blog_id', $blogId);
+        foreach ($params as $key => $value) {
+            $stmt->bindParam($key, $value);
+        }
         
         return $stmt->execute();
     }
 
     /**
-     * Remove all tags from a blog post
+     * Remove tags from a blog
      */
     public function removeTagsFromBlog($blogId) {
         $stmt = $this->conn->prepare("DELETE FROM blog_tags WHERE blog_id = :blog_id");
@@ -66,7 +73,17 @@ class TagDao extends BaseDao {
     }
 
     /**
-     * Get popular tags with count
+     * Remove a specific tag from a blog
+     */
+    public function removeTagFromBlog($blogId, $tagId) {
+        $stmt = $this->conn->prepare("DELETE FROM blog_tags WHERE blog_id = :blog_id AND tag_id = :tag_id");
+        $stmt->bindParam(':blog_id', $blogId);
+        $stmt->bindParam(':tag_id', $tagId);
+        return $stmt->execute();
+    }
+
+    /**
+     * Get popular tags
      */
     public function getPopularTags($limit = 10) {
         $stmt = $this->conn->prepare("
