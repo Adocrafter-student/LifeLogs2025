@@ -11,7 +11,7 @@ class UserDao extends BaseDao {
      * Get user by username
      */
     public function getByUsername($username) {
-        $stmt = $this->conn->prepare("SELECT * FROM users WHERE username = :username");
+        $stmt = $this->connection->prepare("SELECT * FROM users WHERE username = :username");
         $stmt->bindParam(':username', $username);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -21,10 +21,14 @@ class UserDao extends BaseDao {
      * Get user by email
      */
     public function getByEmail($email) {
-        $stmt = $this->conn->prepare("SELECT * FROM users WHERE email = :email");
+        error_log("UserDao: getByEmail preparing statement for email: " . $email);
+        $stmt = $this->connection->prepare("SELECT * FROM users WHERE email = :email");
         $stmt->bindParam(':email', $email);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $user = $stmt->fetch(); // Koristi default FETCH_ASSOC
+        error_log("UserDao: User fetched for email '" . $email . "': " . ($user ? 'User data found' : 'NULL (User not found)'));
+        if ($user) { error_log("UserDao: Fetched user data: " . json_encode($user)); }
+        return $user;
     }
 
     /**
@@ -46,12 +50,14 @@ class UserDao extends BaseDao {
      * Check if login credentials are valid
      */
     public function login($email, $password) {
+        error_log("UserDao: (Deprecated login method within UserDao) called for email: " . $email);
         $user = $this->getByEmail($email);
         
         if ($user && password_verify($password, $user['password_hash'])) {
+            error_log("UserDao: (Deprecated login) Password verified for " . $email);
             return $user;
         }
-        
+        error_log("UserDao: (Deprecated login) Password verification FAILED for " . $email . " or user not found.");
         return false;
     }
 
@@ -67,7 +73,7 @@ class UserDao extends BaseDao {
     }
 
     public function getAll() {
-        $stmt = $this->conn->prepare("SELECT * FROM users");
+        $stmt = $this->connection->prepare("SELECT * FROM users");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

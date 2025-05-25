@@ -11,7 +11,7 @@ class BlogDao extends BaseDao {
      * Get featured blog posts with user information
      */
     public function getFeaturedBlogs() {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->connection->prepare("
             SELECT b.*, u.username, u.avatar_url as author_avatar 
             FROM blogs b 
             JOIN users u ON b.user_id = u.id 
@@ -26,7 +26,7 @@ class BlogDao extends BaseDao {
      * Get latest blog posts with user information
      */
     public function getLatestBlogs() {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->connection->prepare("
             SELECT b.*, u.username, u.avatar_url as author_avatar 
             FROM blogs b 
             JOIN users u ON b.user_id = u.id 
@@ -41,7 +41,7 @@ class BlogDao extends BaseDao {
      * Get blog posts by category
      */
     public function getBlogsByCategory($category) {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->connection->prepare("
             SELECT b.*, u.username, u.avatar_url as author_avatar 
             FROM blogs b 
             JOIN users u ON b.user_id = u.id 
@@ -57,7 +57,7 @@ class BlogDao extends BaseDao {
      * Get blog posts by user ID
      */
     public function getBlogsByUserId($userId) {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->connection->prepare("
             SELECT b.*, u.username, u.avatar_url as author_avatar 
             FROM blogs b 
             JOIN users u ON b.user_id = u.id 
@@ -73,7 +73,7 @@ class BlogDao extends BaseDao {
      * Get blog post by ID with user information
      */
     public function getBlogWithUser($id) {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->connection->prepare("
             SELECT b.*, u.username, u.avatar_url as author_avatar 
             FROM blogs b 
             JOIN users u ON b.user_id = u.id 
@@ -88,7 +88,7 @@ class BlogDao extends BaseDao {
      * Search blog posts by query
      */
     public function searchBlogs($query) {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->connection->prepare("
             SELECT b.*, u.username, u.avatar_url as author_avatar 
             FROM blogs b 
             JOIN users u ON b.user_id = u.id 
@@ -107,7 +107,7 @@ class BlogDao extends BaseDao {
      * Get blog posts by tag
      */
     public function getBlogsByTag($tag) {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->connection->prepare("
             SELECT b.*, u.username, u.avatar_url as author_avatar 
             FROM blogs b 
             JOIN users u ON b.user_id = u.id 

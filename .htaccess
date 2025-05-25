@@ -1,9 +1,15 @@
 RewriteEngine On
 
+# Pokušaj da se osigura da Authorization header stigne do PHP-a
+RewriteCond %{HTTP:Authorization} . 
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
 # If the request matches a real file or folder, serve it directly
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
 # Otherwise, route everything to index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]

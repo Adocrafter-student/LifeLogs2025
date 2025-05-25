@@ -1,8 +1,45 @@
 import { blogPosts, getBlogPostById, getBlogPostsByCategory, getBlogPostsByAuthor } from './blog.js';
 import { navigateTo } from './router.js';
+import { isAuthenticated, getToken, checkAuthStatus } from './auth.js';
 
-export function initializeUI() {
+export async function initializeUI() {
+    // Provjeri status autentifikacije pri inicijalizaciji
+    await checkAuthStatus();
     attachCreateBlogListener();
+    updateAuthUI();
+}
+
+// Funkcija za ažuriranje UI elemenata baziranih na autentifikaciji
+async function updateAuthUI() {
+    const authLinks = document.querySelectorAll('.auth-link');
+    const protectedLinks = document.querySelectorAll('.protected-link');
+    const userInfo = document.querySelector('.user-info');
+    
+    const isLoggedIn = await checkAuthStatus();
+    
+    if (isLoggedIn) {
+        // Korisnik je ulogovan
+        authLinks.forEach(link => link.style.display = 'none');
+        protectedLinks.forEach(link => link.style.display = 'block');
+        
+        if (userInfo) {
+            const user = JSON.parse(localStorage.getItem('user'));
+            userInfo.innerHTML = `
+                <span class="user-name">${user.username}</span>
+                <img src="${user.avatar_url || 'frontend/static-assets/images/avatar.jpg'}" 
+                     alt="User avatar" 
+                     class="user-avatar">
+            `;
+        }
+    } else {
+        // Korisnik nije ulogovan
+        authLinks.forEach(link => link.style.display = 'block');
+        protectedLinks.forEach(link => link.style.display = 'none');
+        
+        if (userInfo) {
+            userInfo.innerHTML = '';
+        }
+    }
 }
 
 export function loadPage(page) {
@@ -28,6 +65,7 @@ export function loadPage(page) {
                 document.getElementById('container').innerHTML = html;
                 renderAllBlogsPage();
                 document.title = "All Blogs | LifeLogs2025";
+                updateAuthUI();
             });
         return;
     }
@@ -44,6 +82,7 @@ export function loadPage(page) {
         if (page === 'profile') {
             setTimeout(renderProfilePage, 0);
         }
+        updateAuthUI();
     }).catch(error => {
         console.error('Failed to load page', error);
         container.innerHTML = 'Error loading page.';

@@ -5,10 +5,17 @@ class UserService {
     private $userDao;
 
     public function __construct() {
-        $this->userDao = new UserDao();
+        try {
+            $this->userDao = new UserDao();
+            error_log("UserService: UserDao initialized successfully."); // DEBUG
+        } catch (Exception $e) {
+            error_log("UserService: Failed to initialize UserDao: " . $e->getMessage()); // DEBUG
+            throw $e; // Ponovo baci izuzetak da se greška propagira
+        }
     }
 
     public function createUser($username, $email, $password, $bio = null, $avatar_url = null) {
+        error_log("UserService->createUser called with: username={$username}, email={$email}, bio (is_null): " . (is_null($bio) ? 'yes' : 'no') . ", avatar_url (is_null): " . (is_null($avatar_url) ? 'yes' : 'no')); // DEBUG
         // Validacija
         if (empty($username) || empty($email) || empty($password)) {
             throw new Exception("All required fields must be filled");
@@ -40,6 +47,7 @@ class UserService {
     }
 
     public function getUserByEmail($email) {
+        error_log("UserService: getUserByEmail called for email: " . $email);
         return $this->userDao->getByEmail($email);
     }
 
