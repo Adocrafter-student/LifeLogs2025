@@ -34,7 +34,7 @@ class UserDao extends BaseDao {
     /**
      * Create new user with hashed password
      */
-    public function register($username, $email, $password, $bio = null, $avatar_url = null) {
+    public function register($username, $email, $password, $bio = null, $avatar_url = null, $role = 'user') {
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
         
         return $this->add([
@@ -42,7 +42,8 @@ class UserDao extends BaseDao {
             'email' => $email,
             'password_hash' => $password_hash,
             'bio' => $bio,
-            'avatar_url' => $avatar_url
+            'avatar_url' => $avatar_url,
+            'role' => $role
         ]);
     }
 

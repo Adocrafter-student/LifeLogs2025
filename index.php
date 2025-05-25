@@ -80,66 +80,58 @@ Flight::route('/*', function() {
     }
 
     if ($is_api_call && !$is_excluded) {
-        error_log("INDEX.PHP MIDDLEWARE: Pokušaj validacije tokena za URL: " . $url);
+        // Smanjujemo logovanje za uspješne slučajeve, ostavljamo za greške
+        // error_log("INDEX.PHP MIDDLEWARE: Pokušaj validacije tokena za URL: " . $url);
         try {
             $auth_header = Flight::request()->getHeader("Authorization");
             
-            // FALLBACK: Pokušaj čitanja direktno iz $_SERVER ako Flight ne vrati header
             if (!$auth_header && isset($_SERVER['HTTP_AUTHORIZATION'])) {
-                error_log("INDEX.PHP MIDDLEWARE: Flight::request()->getHeader('Authorization') je bio prazan. Koristim \$_SERVER['HTTP_AUTHORIZATION'].");
+                // error_log("INDEX.PHP MIDDLEWARE: Flight::request()->getHeader('Authorization') je bio prazan. Koristim \$_SERVER['HTTP_AUTHORIZATION'].");
                 $auth_header = $_SERVER['HTTP_AUTHORIZATION'];
             }
 
-            error_log("INDEX.PHP MIDDLEWARE: Dobijen Authorization header (nakon fallbacka): '" . ($auth_header ? $auth_header : 'STVARNO NIJE POSTAVLJEN ILI PRAZAN') . "'");
+            // error_log("INDEX.PHP MIDDLEWARE: Dobijen Authorization header (nakon fallbacka): '" . ($auth_header ? $auth_header : 'STVARNO NIJE POSTAVLJEN ILI PRAZAN') . "'");
 
             if (!$auth_header) {
-                 error_log("INDEX.PHP MIDDLEWARE: Greška - Missing Authorization header (čak i nakon fallbacka).");
+                 error_log("INDEX.PHP MIDDLEWARE: Greška - Missing Authorization header (čak i nakon fallbacka) za URL: " . $url);
                  Flight::halt(401, json_encode(['message' => "Missing Authorization header."]));
-                 return FALSE; // Zaustavi dalje izvršavanje
+                 return FALSE;
             }
             
-            $token = $auth_header; // Inicijalno postavi token na cijeli header
+            $token = $auth_header;
             if (stripos($auth_header, 'Bearer ') === 0) {
                 $token = substr($auth_header, 7);
-                error_log("INDEX.PHP MIDDLEWARE: Skinut 'Bearer ' prefiks. Token sada: '" . $token . "'");
+                // error_log("INDEX.PHP MIDDLEWARE: Skinut 'Bearer ' prefiks. Token sada: '" . $token . "'");
             } else {
-                error_log("INDEX.PHP MIDDLEWARE: Upozorenje - Authorization header NE POČINJE sa 'Bearer '. Header: '" . $auth_header . "'");
-                // Ovdje biste mogli odlučiti da li da prekinete ili da tretirate cijeli header kao token
-                // Flight::halt(401, json_encode(['message' => "Invalid Authorization header format. Missing Bearer prefix."]));
-                // return FALSE;
+                error_log("INDEX.PHP MIDDLEWARE: Upozorenje - Authorization header NE POČINJE sa 'Bearer '. Header: '" . $auth_header . "' za URL: " . $url);
             }
 
             if (empty($token)){
-                error_log("INDEX.PHP MIDDLEWARE: Greška - Token je PRAZAN nakon obrade. Originalni header: '" . $auth_header . "'");
+                error_log("INDEX.PHP MIDDLEWARE: Greška - Token je PRAZAN nakon obrade. Originalni header: '" . $auth_header . "' za URL: " . $url);
                 Flight::halt(401, json_encode(['message' => "Token is empty after processing Authorization header."]));
                 return FALSE;
             }
-            error_log("INDEX.PHP MIDDLEWARE: Token za slanje u AuthMiddleware: '" . $token . "'");
+            // error_log("INDEX.PHP MIDDLEWARE: Token za slanje u AuthMiddleware: '" . $token . "'");
 
-            // TEST: Da li Flight može da instancira auth_middleware?
             $authMiddlewareInstance = null;
             try {
                 $authMiddlewareInstance = Flight::auth_middleware();
-                if ($authMiddlewareInstance instanceof AuthMiddleware) {
-                    error_log("INDEX.PHP MIDDLEWARE: Flight::auth_middleware() USPJEŠNO vratio instancu AuthMiddleware.");
-                } else {
+                if (!($authMiddlewareInstance instanceof AuthMiddleware)) {
                     error_log("INDEX.PHP MIDDLEWARE: Flight::auth_middleware() NIJE vratio instancu AuthMiddleware. Vratio je: " . gettype($authMiddlewareInstance));
                     Flight::halt(500, json_encode(['message' => 'Auth middleware service not correctly registered or loaded.']));
                     return FALSE;
                 }
+                // else { error_log("INDEX.PHP MIDDLEWARE: Flight::auth_middleware() USPJEŠNO vratio instancu AuthMiddleware."); }
             } catch (\Exception $e) {
                 error_log("INDEX.PHP MIDDLEWARE: GREŠKA prilikom Flight::auth_middleware(): " . $e->getMessage());
                 Flight::halt(500, json_encode(['message' => 'Error accessing auth middleware service: ' . $e->getMessage()]));
                 return FALSE;
             }
 
-            // Sada pozovi metodu na instanci
             if ($authMiddlewareInstance->verifyToken($token)) {
-                error_log("INDEX.PHP MIDDLEWARE: AuthMiddleware->verifyToken vratio TRUE za URL: " . $url);
+                // error_log("INDEX.PHP MIDDLEWARE: AuthMiddleware->verifyToken vratio TRUE za URL: " . $url);
                 return TRUE;
             } else {
-                // verifyToken bi trebao sam uraditi halt ako nije validan.
-                // Ovaj halt je fallback ako verifyToken vrati false umjesto da haltuje ili ako je greška u komunikaciji.
                 error_log("INDEX.PHP MIDDLEWARE: AuthMiddleware->verifyToken vratio FALSE ili nije uradio halt za URL: " . $url);
                 Flight::halt(401, json_encode(['message' => "Token validation failed (returned false from middleware or error in middleware execution)."]));
                 return FALSE;
@@ -155,7 +147,8 @@ Flight::route('/*', function() {
 
 require_once __DIR__ .'/routes/api/auth.php'; // Auth rute (login, register, me)
 require_once __DIR__ . '/routes/api/blogs.php'; // Odkomentarisano
-// require_once __DIR__ . '/routes/api/users.php'; // Primjer za druge rute
+require_once __DIR__ . '/routes/api/users.php'; // Uključujemo rute za korisnike
+// require_once __DIR__ . '/routes/api/users.php'; // Primjer za druge rute -> ova linija je bila duplikat ili greška
 
 
 // Serviranje frontend-a (index.html) za sve ostale GET zahtjeve koji nisu API
