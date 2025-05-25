@@ -22,7 +22,7 @@ class TagDao extends BaseDao {
      * Get tag by name
      */
     public function getTagByName($name) {
-        $stmt = $this->conn->prepare("SELECT * FROM tags WHERE name = :name");
+        $stmt = $this->connection->prepare("SELECT * FROM tags WHERE name = :name");
         $stmt->bindParam(':name', $name);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -32,7 +32,7 @@ class TagDao extends BaseDao {
      * Get tags for a blog
      */
     public function getTagsForBlog($blogId) {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->connection->prepare("
             SELECT t.* FROM tags t 
             JOIN blog_tags bt ON t.id = bt.tag_id 
             WHERE bt.blog_id = :blog_id
@@ -54,7 +54,7 @@ class TagDao extends BaseDao {
         }
         
         $sql = "INSERT INTO blog_tags (blog_id, tag_id) VALUES " . implode(',', $values);
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->connection->prepare($sql);
         $stmt->bindParam(':blog_id', $blogId);
         foreach ($params as $key => $value) {
             $stmt->bindParam($key, $value);
@@ -67,7 +67,7 @@ class TagDao extends BaseDao {
      * Remove tags from a blog
      */
     public function removeTagsFromBlog($blogId) {
-        $stmt = $this->conn->prepare("DELETE FROM blog_tags WHERE blog_id = :blog_id");
+        $stmt = $this->connection->prepare("DELETE FROM blog_tags WHERE blog_id = :blog_id");
         $stmt->bindParam(':blog_id', $blogId);
         return $stmt->execute();
     }
@@ -76,7 +76,7 @@ class TagDao extends BaseDao {
      * Remove a specific tag from a blog
      */
     public function removeTagFromBlog($blogId, $tagId) {
-        $stmt = $this->conn->prepare("DELETE FROM blog_tags WHERE blog_id = :blog_id AND tag_id = :tag_id");
+        $stmt = $this->connection->prepare("DELETE FROM blog_tags WHERE blog_id = :blog_id AND tag_id = :tag_id");
         $stmt->bindParam(':blog_id', $blogId);
         $stmt->bindParam(':tag_id', $tagId);
         return $stmt->execute();
@@ -86,7 +86,7 @@ class TagDao extends BaseDao {
      * Get popular tags
      */
     public function getPopularTags($limit = 10) {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->connection->prepare("
             SELECT t.*, COUNT(bt.blog_id) as usage_count 
             FROM tags t 
             LEFT JOIN blog_tags bt ON t.id = bt.tag_id 

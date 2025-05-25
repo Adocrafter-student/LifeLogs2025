@@ -30,15 +30,9 @@ require_once __DIR__ . '/middleware/AuthMiddleware.php';
 // require_once __DIR__ . '/dao/AuthDao.php';      // Komentarisano - biće uključeno po potrebi unutar AuthService-a
 
 // require_once __DIR__ . '/services/BaseService.php'; // Komentarisano - biće uključeno po potrebi unutar AuthService-a (ako ga nasljeđuje)
-require_once __DIR__ . '/services/AuthService.php'; // Profesoricin AuthService (prilagođen)
+require_once __DIR__ . '/services/AuthService.php';
 require_once __DIR__ . '/services/UserService.php'; // UKLJUČUJEMO UserService.php
 require_once __DIR__ . '/services/BlogService.php'; // Dodajemo BlogService
-// Možda će biti potrebni i drugi servisi ako ih imate (BlogService, CommentService itd.)
-// foreach (glob(__DIR__ . '/services/*.php') as $file) {
-//    if (!in_array(basename($file), ['AuthService.php', 'BaseService.php'])) {
-//        require_once $file;
-//    }
-// }
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -47,16 +41,14 @@ ob_start(); // Pokreni output buffering
 
 // Registracija servisa i middleware-a
 Flight::register('auth_dao', 'AuthDao');
-Flight::register('auth_service', 'AuthService'); // Koristi profesoricin (prilagođen)
+Flight::register('auth_service', 'AuthService');
 Flight::register('auth_middleware', 'AuthMiddleware');
 
-// Ovdje možete registrovati i ostale servise ako ih imate i ako pratite isti obrazac
-// Npr. ako imate UserService.php koji NIJE Auth, a želite ga kao Flight::userService()
-if (class_exists('UserService')) { // Provjeravamo da li klasa postoji nakon require_once
-    Flight::register('userService', 'UserService'); // REGISTRUJEMO userService
+if (class_exists('UserService')) {
+    Flight::register('userService', 'UserService');
 }
-if (class_exists('BlogService')) { // Provjeravamo da li klasa BlogService postoji
-    Flight::register('blogService', 'BlogService'); // REGISTRUJEMO blogService
+if (class_exists('BlogService')) {
+    Flight::register('blogService', 'BlogService');
 }
 
 
@@ -75,18 +67,7 @@ Flight::route('/*', function() {
 
     $is_excluded = false;
     foreach ($excluded_paths as $path) {
-        // Provjeravamo da li URL počinje sa izuzetom putanjom
-        // Napomena: Flight::request()->url može uključivati base path ako je aplikacija u poddirektoriju
-        // Ako $url izgleda kao /LifeLogs2025/api/auth/login, a $path je /api/auth/login
-        // onda strpos($url, $path) će vratiti poziciju, a ne nužno 0.
-        // Bolje je provjeriti da li $url ZAVRŠAVA sa $path ili koristiti regex, 
-        // ili osigurati da $path u $excluded_paths uključuje punu putanju od roota domene.
-        // Za sada, ako je vaša aplikacija u rootu (npr. localhost/api/...), strpos === 0 je OK.
-        // Ako je u /LifeLogs2025/, onda putanje u excluded_paths trebaju biti /LifeLogs2025/api/auth/login itd.
-        // Ili, ako $url iz FlightPHP-a daje putanju RELATIVNU OD APLIKACIJE (npr. /api/auth/login),
-        // onda je trenutna provjera OK.
-        // Hajde da logujemo $url da vidimo šta Flight daje.
-        // error_log("DEBUG URL: $url, Checking against excluded path: $path"); 
+
         if (strpos($url, $path) !== false && strpos($url, $path) === (strlen($url) - strlen($path) - (substr($url, -1) === '/' ? 1:0) ) ) {
              // Ovo je kompleksnija provjera, možda jednostavnije:
         } 
@@ -172,9 +153,6 @@ Flight::route('/*', function() {
     return TRUE;
 });
 
-// Učitavanje API ruta
-// Pretpostavka da su sve vaše API rute u routes/api/ direktoriju
-// i da unutar tih fajlova koristite Flight::group('/api/...', function(){ ... }); ili direktno Flight::route('/api/...')
 require_once __DIR__ .'/routes/api/auth.php'; // Auth rute (login, register, me)
 require_once __DIR__ . '/routes/api/blogs.php'; // Odkomentarisano
 // require_once __DIR__ . '/routes/api/users.php'; // Primjer za druge rute

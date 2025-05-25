@@ -7,16 +7,16 @@ class Database {
     public $conn;
 
     public function getConnection() {
-        $this->conn = null;
+        $this->connectionection = null;
 
         try {
-            $this->conn = new mysqli($this->host, $this->username, $this->password, $this->db_name);
-            $this->conn->set_charset("utf8");
+            $this->connection = new mysqli($this->host, $this->username, $this->password, $this->db_name);
+            $this->connection->set_charset("utf8");
         } catch(Exception $e) {
             echo "Connection error: " . $e->getMessage();
         }
 
-        return $this->conn;
+        return $this->connection;
     }
 }
 ?> 

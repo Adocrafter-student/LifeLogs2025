@@ -2,7 +2,7 @@
 // require_once __DIR__ . "/../Config.php"; // Uključeno u index.php ili autoloader
 
 class BaseDao {
-    protected $connection; // Promijenjeno u $connection da odgovara profesoricinom
+    protected $connection;
     protected $table_name;
 
     /**
@@ -11,7 +11,6 @@ class BaseDao {
     public function __construct($table_name) {
         $this->table_name = $table_name;
         try {
-            // Koristimo metode Config klase kako ih profesorica poziva
             $this->connection = new PDO(
                 "mysql:host=" . Config::DB_HOST() . ";dbname=" . Config::DB_NAME() . ";port=" . Config::DB_PORT() . ";charset=utf8mb4",
                 Config::DB_USER(),
@@ -19,24 +18,24 @@ class BaseDao {
                 [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES   => false, // Dodao sam ovo kao dobru praksu
+                    PDO::ATTR_EMULATE_PREPARES   => false,
                 ]
             );
         } catch (PDOException $e) {
             error_log("BaseDao PDO Connection Error: " . $e->getMessage());
-            throw $e; // Ponovo baci izuzetak
+            throw $e;
         }
     }
 
-    protected function query($query, $params = []) { // Dodao default prazan niz za params
+    protected function query($query, $params = []) {
         $stmt = $this->connection->prepare($query);
         $stmt->execute($params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Eksplicitno zbog jasnoće, iako je default
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    protected function query_unique($query, $params = []) { // Dodao default prazan niz za params
+    protected function query_unique($query, $params = []) {
         $results = $this->query($query, $params);
-        return reset($results); // Vraća prvi element ili false ako je niz prazan
+        return reset($results);
     }
 
     /**

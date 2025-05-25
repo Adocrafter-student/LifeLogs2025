@@ -11,7 +11,7 @@ class CommentDao extends BaseDao {
      * Get comments for a blog post with user information
      */
     public function getCommentsForBlog($blogId) {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->connection->prepare("
             SELECT c.*, u.username, u.avatar_url 
             FROM comments c 
             JOIN users u ON c.user_id = u.id 
@@ -38,7 +38,7 @@ class CommentDao extends BaseDao {
      * Get comments by user
      */
     public function getCommentsByUser($userId) {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->connection->prepare("
             SELECT c.*, b.title as blog_title 
             FROM comments c 
             JOIN blogs b ON c.blog_id = b.id 
@@ -54,7 +54,7 @@ class CommentDao extends BaseDao {
      * Delete all comments for a blog post
      */
     public function deleteCommentsForBlog($blogId) {
-        $stmt = $this->conn->prepare("DELETE FROM comments WHERE blog_id = :blog_id");
+        $stmt = $this->connection->prepare("DELETE FROM comments WHERE blog_id = :blog_id");
         $stmt->bindParam(':blog_id', $blogId);
         return $stmt->execute();
     }
