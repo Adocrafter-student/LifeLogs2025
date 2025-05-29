@@ -10,29 +10,41 @@
 <body>
     <div class="container">
         <div class="form-box">
-            <form action="/path/to/registration" method="post">
+            <h2 class="text-center mb-4">Create Your Account</h2>
+            <form id="registrationForm" onsubmit="return false;">
                 <div class="form-group">
-                    <label for="newUsername">Username:</label>
-                    <input type="text" class="form-control" id="newUsername" name="username" required>
+                    <label for="registerUsername">Username:</label>
+                    <input type="text" class="form-control" id="registerUsername" name="username" required>
                 </div>
                 <div class="form-group">
-                    <label for="newEmail">Email:</label>
-                    <input type="email" class="form-control" id="newEmail" name="email" required>
+                    <label for="registerEmail">Email:</label>
+                    <input type="email" class="form-control" id="registerEmail" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="newPassword">Password:</label>
-                    <input type="password" class="form-control" id="newPassword" name="password" required>
+                    <label for="registerPassword">Password:</label>
+                    <input type="password" class="form-control" id="registerPassword" name="password" required>
                 </div>
                 <div class="form-group">
                     <label for="confirmPassword">Confirm Password:</label>
                     <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                 </div>
-                <button type="submit" class="btn btn-success">Register</button>
+                <button type="submit" class="btn btn-success btn-block">Register</button>
             </form>
+            <div class="mt-3 text-center">
+                <p>Already have an account? <a href="#/login">Login</a></p>
+            </div>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="module">
+        import { initializeAuth } from '../js/auth.js';
+        
+        // Inicijalizujemo autentifikaciju kada se stranica učita
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAuth();
+        });
+    </script>
 </body>
 </html>

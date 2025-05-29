@@ -27,7 +27,7 @@ class SearchDao extends BaseDao {
      * Search in blogs by title
      */
     private function searchBlogs($query, $offset, $limit) {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->connection->prepare("
             SELECT b.*, u.username as author_username 
             FROM blogs b 
             JOIN users u ON b.user_id = u.id 
@@ -49,7 +49,7 @@ class SearchDao extends BaseDao {
      * Search in tags
      */
     private function searchTags($query, $offset, $limit) {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->connection->prepare("
             SELECT * FROM tags 
             WHERE name LIKE :query 
             ORDER BY name 
@@ -69,7 +69,7 @@ class SearchDao extends BaseDao {
      * Search in users by username
      */
     private function searchUsers($query, $offset, $limit) {
-        $stmt = $this->conn->prepare("
+        $stmt = $this->connection->prepare("
             SELECT * FROM users 
             WHERE username LIKE :query 
             ORDER BY username 
